@@ -1,7 +1,6 @@
 package com.abhinav.dhamaniya.StockExchange.admin.rest;
 
 import com.abhinav.dhamaniya.StockExchange.admin.dto.CompanyDto;
-import com.abhinav.dhamaniya.StockExchange.admin.dto.IpoDto;
 import com.abhinav.dhamaniya.StockExchange.admin.dto.response.EntityCreatedResponse;
 import com.abhinav.dhamaniya.StockExchange.admin.dto.response.EntityNotFoundResponse;
 import com.abhinav.dhamaniya.StockExchange.admin.exception.EntityNotFoundException;
