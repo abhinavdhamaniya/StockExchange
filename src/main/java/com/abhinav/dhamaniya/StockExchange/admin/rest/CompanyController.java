@@ -48,4 +48,17 @@ public class CompanyController {
         return new ResponseEntity(new EntityCreatedResponse(returnedId, "Company Deactivated."), HttpStatus.OK);
     }
 
+    @PutMapping (produces = "application/json")
+    public ResponseEntity updateCompany(@RequestBody CompanyDto companyDto) {
+
+        int generatedCompanyId;
+        try{
+            generatedCompanyId = companyService.updateCompany(companyDto);
+        }
+        catch (EntityNotFoundException entityNotFoundException)
+        {
+            return new ResponseEntity(new EntityNotFoundResponse("Entity Not Found"), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(new EntityCreatedResponse(generatedCompanyId, "Company Updated."), HttpStatus.OK);
+    }
 }

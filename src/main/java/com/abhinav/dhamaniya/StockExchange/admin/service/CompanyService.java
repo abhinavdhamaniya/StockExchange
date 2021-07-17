@@ -48,4 +48,15 @@ public class CompanyService {
         companyRepository.save(company);
         return company.getId();
     }
+
+    public int updateCompany(CompanyDto companyDto) throws EntityNotFoundException {
+        if(!companyRepository.findById(companyDto.getId()).isPresent()) throw new EntityNotFoundException("Company with given ID "+ companyDto.getId() +" is not found");
+        for(int stockExchangeId : companyDto.getStockExchangeIds()) {
+            if(!stockExchangeRepository.findById(stockExchangeId).isPresent()) throw new EntityNotFoundException("Stock Exchange with given ID "+ stockExchangeId +" is not found");
+        }
+        int companyId = companyRepository.save(mapper.convertToEntity(companyDto)).getId();
+        companyStockExchangeJoinRepository.deleteRecordsWithCompanyId(companyId);
+        for(int stockExchangeId : companyDto.getStockExchangeIds()) companyStockExchangeJoinRepository.save(new CompanyStockExchangeJoin(0, stockExchangeId, companyId));
+        return companyId;
+    }
 }
