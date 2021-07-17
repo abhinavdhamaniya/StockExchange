@@ -3,6 +3,7 @@ package com.abhinav.dhamaniya.StockExchange.admin.rest;
 import com.abhinav.dhamaniya.StockExchange.admin.dto.IpoDto;
 import com.abhinav.dhamaniya.StockExchange.admin.dto.response.EntityCreatedResponse;
 import com.abhinav.dhamaniya.StockExchange.admin.dto.response.EntityNotFoundResponse;
+import com.abhinav.dhamaniya.StockExchange.admin.exception.EntityNotFoundException;
 import com.abhinav.dhamaniya.StockExchange.admin.service.IpoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,5 +34,23 @@ public class IpoController {
     @GetMapping(produces = "application/json")
     public ResponseEntity getAllIpos() {
         return new ResponseEntity(ipoService.getAllIpos(), HttpStatus.OK);
+    }
+
+    @PutMapping(consumes = "application/json", produces = "application/json")
+    public ResponseEntity updateIpo(@RequestBody IpoDto ipoDto) {
+
+        int generatedIpoId;
+        try{
+            generatedIpoId = ipoService.updateIpo(ipoDto);
+        }
+        catch (EntityNotFoundException entityNotFoundException)
+        {
+            return new ResponseEntity(new EntityNotFoundResponse("IPO Not Found"), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception exception)
+        {
+            return new ResponseEntity(new EntityNotFoundResponse("Company Not Found"), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(new EntityCreatedResponse(generatedIpoId, "IPO Updated."), HttpStatus.OK);
     }
 }

@@ -1,6 +1,8 @@
 package com.abhinav.dhamaniya.StockExchange.admin.service;
 
 import com.abhinav.dhamaniya.StockExchange.admin.dto.IpoDto;
+import com.abhinav.dhamaniya.StockExchange.admin.entities.Ipo;
+import com.abhinav.dhamaniya.StockExchange.admin.exception.EntityNotFoundException;
 import com.abhinav.dhamaniya.StockExchange.admin.mapper.IpoMapper;
 import com.abhinav.dhamaniya.StockExchange.admin.repository.IpoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +25,11 @@ public class IpoService {
 
     public List<IpoDto> getAllIpos() {
         return ipoRepository.findAll().stream().map(ipo -> ipoMapper.convertToDto(ipo)).collect(Collectors.toList());
+    }
+
+    public int updateIpo(IpoDto ipoDto) throws EntityNotFoundException, Exception{
+        Ipo ipo = ipoRepository.findById(ipoDto.getId()).orElse(null);
+        if(ipo == null) throw new EntityNotFoundException("Ipo Not Found");
+        return ipoRepository.save(ipoMapper.convertToEntity(ipoDto)).getId();
     }
 }
