@@ -1,19 +1,20 @@
 package com.abhinav.dhamaniya.StockExchange.admin.service;
 
+import com.abhinav.dhamaniya.StockExchange.admin.dto.IpoDto;
 import com.abhinav.dhamaniya.StockExchange.admin.entities.Company;
 import com.abhinav.dhamaniya.StockExchange.admin.entities.CompanyStockExchangeJoin;
 import com.abhinav.dhamaniya.StockExchange.admin.exception.EntityNotFoundException;
 import com.abhinav.dhamaniya.StockExchange.admin.mapper.CompanyMapper;
+import com.abhinav.dhamaniya.StockExchange.admin.mapper.IpoMapper;
 import com.abhinav.dhamaniya.StockExchange.admin.repository.CompanyRepository;
 import com.abhinav.dhamaniya.StockExchange.admin.repository.CompanyStockExchangeJoinRepository;
+import com.abhinav.dhamaniya.StockExchange.admin.repository.IpoRepository;
 import com.abhinav.dhamaniya.StockExchange.admin.repository.StockExchangeRepository;
 import com.abhinav.dhamaniya.StockExchange.admin.dto.CompanyDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -25,20 +26,20 @@ public class CompanyService {
     @Autowired
     CompanyStockExchangeJoinRepository companyStockExchangeJoinRepository;
     @Autowired
-    CompanyMapper mapper;
+    CompanyMapper companyMapper;
 
     public int createCompany(CompanyDto companyDto) throws EntityNotFoundException {
 
         for(int stockExchangeId : companyDto.getStockExchangeIds()) {
             if(!stockExchangeRepository.findById(stockExchangeId).isPresent()) throw new EntityNotFoundException("Stock Exchange with given ID "+ stockExchangeId +" is not found");
         }
-        int generatedCompanyId = companyRepository.save(mapper.convertToEntity(companyDto)).getId();
+        int generatedCompanyId = companyRepository.save(companyMapper.convertToEntity(companyDto)).getId();
         for(int stockExchangeId : companyDto.getStockExchangeIds()) companyStockExchangeJoinRepository.save(new CompanyStockExchangeJoin(0, stockExchangeId, generatedCompanyId));
         return generatedCompanyId;
     }
 
     public List<CompanyDto> getAllCompanies() {
-        return companyRepository.findAllDeactivatedFalse().stream().map(company -> mapper.convertToDto(company)).collect(Collectors.toList());
+        return companyRepository.findAllDeactivatedFalse().stream().map(company -> companyMapper.convertToDto(company)).collect(Collectors.toList());
     }
 
     public int deactivateCompany(int id) throws EntityNotFoundException {
@@ -54,7 +55,7 @@ public class CompanyService {
         for(int stockExchangeId : companyDto.getStockExchangeIds()) {
             if(!stockExchangeRepository.findById(stockExchangeId).isPresent()) throw new EntityNotFoundException("Stock Exchange with given ID "+ stockExchangeId +" is not found");
         }
-        int companyId = companyRepository.save(mapper.convertToEntity(companyDto)).getId();
+        int companyId = companyRepository.save(companyMapper.convertToEntity(companyDto)).getId();
         companyStockExchangeJoinRepository.deleteRecordsWithCompanyId(companyId);
         for(int stockExchangeId : companyDto.getStockExchangeIds()) companyStockExchangeJoinRepository.save(new CompanyStockExchangeJoin(0, stockExchangeId, companyId));
         return companyId;

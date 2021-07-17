@@ -1,6 +1,7 @@
 package com.abhinav.dhamaniya.StockExchange.admin.rest;
 
 import com.abhinav.dhamaniya.StockExchange.admin.dto.CompanyDto;
+import com.abhinav.dhamaniya.StockExchange.admin.dto.IpoDto;
 import com.abhinav.dhamaniya.StockExchange.admin.dto.response.EntityCreatedResponse;
 import com.abhinav.dhamaniya.StockExchange.admin.dto.response.EntityNotFoundResponse;
 import com.abhinav.dhamaniya.StockExchange.admin.exception.EntityNotFoundException;
@@ -26,6 +27,10 @@ public class CompanyController {
         catch (EntityNotFoundException entityNotFoundException)
         {
             return new ResponseEntity(new EntityNotFoundResponse("StockExchange Not Found"), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception exception)
+        {
+            return new ResponseEntity(new EntityNotFoundResponse("Sector Not Found"), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity(new EntityCreatedResponse(generatedCompanyId, "Company Created."), HttpStatus.OK);
     }

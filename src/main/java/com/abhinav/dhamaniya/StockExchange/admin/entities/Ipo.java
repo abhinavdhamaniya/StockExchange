@@ -23,6 +23,9 @@ public class Ipo {
     @JoinColumn(name = "COMPANY_ID", referencedColumnName = "ID")
     private Company company;
 
+    @Column(name = "STOCK_EXCHANGE_NAME")
+    private String stockExchangeName;
+
     @Column(name = "PRICE_PER_SHARE")
     private Double pricePerShare;
 
