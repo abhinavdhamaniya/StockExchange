@@ -7,10 +7,7 @@ import com.abhinav.dhamaniya.StockExchange.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("user")
@@ -31,5 +28,10 @@ public class UserController {
             return new ResponseEntity(new ErrorOccurred("Error Occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity(new EntityCreatedResponse(generatedUserId, "User Created."), HttpStatus.OK);
+    }
+
+    @GetMapping(produces = "application/json")
+    public ResponseEntity getAllUsers() {
+        return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
     }
 }
