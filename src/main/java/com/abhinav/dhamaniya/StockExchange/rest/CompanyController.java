@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("admin/companies")
 public class CompanyController {
+
     @Autowired
     CompanyService companyService;
 
