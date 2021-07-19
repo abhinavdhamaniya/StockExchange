@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.util.Set;
 
 public interface CompanyStockExchangeJoinRepository extends JpaRepository<CompanyStockExchangeJoin, Integer> {
 
@@ -14,4 +15,7 @@ public interface CompanyStockExchangeJoinRepository extends JpaRepository<Compan
     @Modifying
     @Query(value = "DELETE FROM COMPANY_STOCK_EXCHANGE_JOIN WHERE COMPANY_ID = :companyId", nativeQuery = true)
     void deleteRecordsWithCompanyId(@Param("companyId") int companyId);
+
+    @Query(value = "SELECT STOCK_EXCHANGE_ID FROM COMPANY_STOCK_EXCHANGE_JOIN WHERE COMPANY_ID = :companyId", nativeQuery = true)
+    Set<Integer> getStockExchangeIdsByCompanyId(@Param("companyId") int companyId);
 }

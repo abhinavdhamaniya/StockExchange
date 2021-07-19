@@ -36,7 +36,14 @@ public class CompanyService {
     }
 
     public List<CompanyDto> getAllCompanies() {
-        return companyRepository.findAllDeactivatedFalse().stream().map(company -> companyMapper.convertToDto(company)).collect(Collectors.toList());
+        List<CompanyDto> companyDtoList =companyRepository.findAllDeactivatedFalse().stream()
+                                            .map(company -> companyMapper.convertToDto(company))
+                                            .collect(Collectors.toList());
+        for(CompanyDto companyDto: companyDtoList)
+        {
+            companyDto.setStockExchangeIds(companyStockExchangeJoinRepository.getStockExchangeIdsByCompanyId(companyDto.getId()));
+        }
+        return companyDtoList;
     }
 
     public int deactivateCompany(int id) throws EntityNotFoundException {
