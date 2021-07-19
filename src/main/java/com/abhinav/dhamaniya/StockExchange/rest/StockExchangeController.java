@@ -21,7 +21,7 @@ public class StockExchangeController {
     StockExchangeService stockExchangeService;
 
     @GetMapping(produces = "application/json")
-    public List<StockExchange> getAllStockExchanges() {
+    public List<StockExchangeDto> getAllStockExchanges() {
         return stockExchangeService.getAllStockExchanges();
     }
 

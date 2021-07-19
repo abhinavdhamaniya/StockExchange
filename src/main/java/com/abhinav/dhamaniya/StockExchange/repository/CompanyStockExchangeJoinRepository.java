@@ -18,4 +18,7 @@ public interface CompanyStockExchangeJoinRepository extends JpaRepository<Compan
 
     @Query(value = "SELECT STOCK_EXCHANGE_ID FROM COMPANY_STOCK_EXCHANGE_JOIN WHERE COMPANY_ID = :companyId", nativeQuery = true)
     Set<Integer> getStockExchangeIdsByCompanyId(@Param("companyId") int companyId);
+
+    @Query(value = "SELECT COMPANY_ID FROM COMPANY_STOCK_EXCHANGE_JOIN WHERE STOCK_EXCHANGE_ID = :stockExchangeId", nativeQuery = true)
+    Set<Integer> getCompanyIdsByStockExchangeId(@Param("stockExchangeId") int stockExchangeId);
 }
