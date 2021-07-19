@@ -2,8 +2,10 @@ package com.abhinav.dhamaniya.StockExchange.rest;
 
 import com.abhinav.dhamaniya.StockExchange.dto.UserDto;
 import com.abhinav.dhamaniya.StockExchange.dto.response.EntityCreatedResponse;
+import com.abhinav.dhamaniya.StockExchange.dto.response.EntityNotFoundResponse;
 import com.abhinav.dhamaniya.StockExchange.dto.response.ErrorOccurred;
 import com.abhinav.dhamaniya.StockExchange.exception.EntityNotFoundException;
+import com.abhinav.dhamaniya.StockExchange.exception.UserNotConfirmed;
 import com.abhinav.dhamaniya.StockExchange.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,5 +56,27 @@ public class UserController {
             return new ResponseEntity(new ErrorOccurred("User Not Found"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity(new EntityCreatedResponse(generatedUserId, "User Confirmed."), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/updateUser/{id}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity updateUser(@PathVariable int id, @RequestBody UserDto userDto) {
+
+        int returnedUserId;
+        try {
+            returnedUserId = userService.updateUser(id, userDto);
+        }
+        catch (EntityNotFoundException entityNotFoundException)
+        {
+            return new ResponseEntity(new EntityNotFoundResponse("User with userId: "+id+" not found."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch (UserNotConfirmed userNotConfirmed)
+        {
+            return new ResponseEntity(new EntityNotFoundResponse("User with userId: "+id+" not confirmed."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch (Exception exception)
+        {
+            return new ResponseEntity(new ErrorOccurred("Error Occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(new EntityCreatedResponse(returnedUserId, "User Updated."), HttpStatus.OK);
     }
 }

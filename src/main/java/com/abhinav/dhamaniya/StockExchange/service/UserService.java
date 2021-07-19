@@ -3,6 +3,7 @@ package com.abhinav.dhamaniya.StockExchange.service;
 import com.abhinav.dhamaniya.StockExchange.dto.UserDto;
 import com.abhinav.dhamaniya.StockExchange.entities.User;
 import com.abhinav.dhamaniya.StockExchange.exception.EntityNotFoundException;
+import com.abhinav.dhamaniya.StockExchange.exception.UserNotConfirmed;
 import com.abhinav.dhamaniya.StockExchange.mapper.UserMapper;
 import com.abhinav.dhamaniya.StockExchange.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,15 @@ public class UserService {
             return user.getId();
         }
         else throw new EntityNotFoundException("User with user ID: "+userId+" Not Found.");
+    }
+
+    public int updateUser(int id, UserDto userDto) throws EntityNotFoundException, UserNotConfirmed {
+        User user = userRepository.findById(id).orElse(null);
+        if(user == null) throw new EntityNotFoundException("User with userId: "+id+" not found.");
+        if(user.getConfirmed() == false) throw new UserNotConfirmed("User with userId: "+id+" is not confirmed.");
+        User updatedUserEntity = userMapper.convertToEntity(userDto);
+        updatedUserEntity.setConfirmed(true);
+        updatedUserEntity.setId(id);
+        return userRepository.save(updatedUserEntity).getId();
     }
 }
