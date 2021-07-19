@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("admin/companies")
 public class CompanyController {
@@ -48,6 +50,18 @@ public class CompanyController {
         catch(EntityNotFoundException entityNotFoundException)
         {
             return new ResponseEntity(new EntityNotFoundResponse("Company with id: "+id+" not found."), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "/list/{idList}", produces = "application/json")
+    public ResponseEntity getCompanyListByCompanyIdList(@PathVariable List<Integer> idList) {
+        try {
+            return new ResponseEntity(companyService.getCompanyListByCompanyIdList(idList), HttpStatus.OK);
+        }
+        catch(EntityNotFoundException entityNotFoundException)
+        {
+            System.out.println(entityNotFoundException);
+            return new ResponseEntity(new EntityNotFoundResponse("Company not found."), HttpStatus.NOT_FOUND);
         }
     }
 

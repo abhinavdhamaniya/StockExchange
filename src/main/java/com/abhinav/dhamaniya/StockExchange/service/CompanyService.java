@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,25 @@ public class CompanyService {
         if(companyDto == null) throw new EntityNotFoundException("Company with id: "+id+" not found.");
         companyDto.setStockExchangeIds(companyStockExchangeJoinRepository.getStockExchangeIdsByCompanyId(companyDto.getId()));
         return companyDto;
+    }
+
+    public List<CompanyDto> getCompanyListByCompanyIdList(List<Integer> companyIdList) throws EntityNotFoundException {
+
+        List<CompanyDto> companyDtoList = new ArrayList<>();
+        companyIdList.forEach(companyId -> {
+            try {
+                CompanyDto companyDto = companyMapper.convertToDto(companyRepository.findByIdDeactivatedFalse(companyId).orElse(null));
+                if (companyDto == null)
+                    throw new EntityNotFoundException("Company with id: " + companyId + " not found.");
+                companyDto.setStockExchangeIds(companyStockExchangeJoinRepository.getStockExchangeIdsByCompanyId(companyDto.getId()));
+                companyDtoList.add(companyDto);
+            }
+            catch (EntityNotFoundException entityNotFoundException)
+            {
+                System.out.println(entityNotFoundException);
+            }
+        });
+        return companyDtoList;
     }
 
     public int deactivateCompany(int id) throws EntityNotFoundException {
