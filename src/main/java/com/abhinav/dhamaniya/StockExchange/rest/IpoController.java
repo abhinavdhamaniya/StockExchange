@@ -36,11 +36,12 @@ public class IpoController {
         return new ResponseEntity(ipoService.getAllIpos(), HttpStatus.OK);
     }
 
-    @PutMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity updateIpo(@RequestBody IpoDto ipoDto) {
+    @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity updateIpo(@PathVariable int id, @RequestBody IpoDto ipoDto) {
 
         int generatedIpoId;
         try{
+            ipoDto.setId(id);
             generatedIpoId = ipoService.updateIpo(ipoDto);
         }
         catch (EntityNotFoundException entityNotFoundException)
