@@ -3,11 +3,14 @@ package com.abhinav.dhamaniya.StockExchange.rest;
 import com.abhinav.dhamaniya.StockExchange.dto.UserDto;
 import com.abhinav.dhamaniya.StockExchange.dto.response.EntityCreatedResponse;
 import com.abhinav.dhamaniya.StockExchange.dto.response.ErrorOccurred;
+import com.abhinav.dhamaniya.StockExchange.exception.EntityNotFoundException;
 import com.abhinav.dhamaniya.StockExchange.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.mail.MessagingException;
 
 @RestController
 @RequestMapping("user")
@@ -23,6 +26,10 @@ public class UserController {
         try {
             generatedUserId = userService.signUpUser(userDto);
         }
+        catch (MessagingException messagingException)
+        {
+            return new ResponseEntity(new ErrorOccurred("Error occurred while sending confirmation mail."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         catch (Exception exception)
         {
             return new ResponseEntity(new ErrorOccurred("Error Occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -33,5 +40,19 @@ public class UserController {
     @GetMapping(produces = "application/json")
     public ResponseEntity getAllUsers() {
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/confirmUser/{id}")
+    public ResponseEntity confirmUserViaMail(@PathVariable int id) {
+
+        int generatedUserId;
+        try {
+            generatedUserId = userService.confirmUserViaMail(id);
+        }
+        catch (EntityNotFoundException entityNotFoundException)
+        {
+            return new ResponseEntity(new ErrorOccurred("User Not Found"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity(new EntityCreatedResponse(generatedUserId, "User Confirmed."), HttpStatus.OK);
     }
 }
