@@ -40,7 +40,18 @@ public class CompanyController {
         return new ResponseEntity(companyService.getAllCompanies(), HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/{id}", produces = "application/json")
+    @GetMapping(value = "/{id}", produces = "application/json")
+    public ResponseEntity getCompanyById(@PathVariable int id) {
+        try {
+            return new ResponseEntity(companyService.getCompanyById(id), HttpStatus.OK);
+        }
+        catch(EntityNotFoundException entityNotFoundException)
+        {
+            return new ResponseEntity(new EntityNotFoundResponse("Company with id: "+id+" not found."), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping(value = "deactivate/{id}", produces = "application/json")
     public ResponseEntity deactivateCompany(@PathVariable int id) {
         int returnedId;
         try{
@@ -53,11 +64,12 @@ public class CompanyController {
         return new ResponseEntity(new EntityCreatedResponse(returnedId, "Company Deactivated."), HttpStatus.OK);
     }
 
-    @PutMapping (produces = "application/json")
-    public ResponseEntity updateCompany(@RequestBody CompanyDto companyDto) {
+    @PutMapping (value = "/{id}", produces = "application/json")
+    public ResponseEntity updateCompany(@PathVariable int id, @RequestBody CompanyDto companyDto) {
 
         int generatedCompanyId;
         try{
+            companyDto.setId(id);
             generatedCompanyId = companyService.updateCompany(companyDto);
         }
         catch (EntityNotFoundException entityNotFoundException)

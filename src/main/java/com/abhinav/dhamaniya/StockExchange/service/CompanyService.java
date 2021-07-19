@@ -9,7 +9,9 @@ import com.abhinav.dhamaniya.StockExchange.repository.CompanyStockExchangeJoinRe
 import com.abhinav.dhamaniya.StockExchange.repository.StockExchangeRepository;
 import com.abhinav.dhamaniya.StockExchange.dto.CompanyDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +38,7 @@ public class CompanyService {
     }
 
     public List<CompanyDto> getAllCompanies() {
-        List<CompanyDto> companyDtoList =companyRepository.findAllDeactivatedFalse().stream()
+        List<CompanyDto> companyDtoList = companyRepository.findAllDeactivatedFalse().stream()
                                             .map(company -> companyMapper.convertToDto(company))
                                             .collect(Collectors.toList());
         for(CompanyDto companyDto: companyDtoList)
@@ -44,6 +46,13 @@ public class CompanyService {
             companyDto.setStockExchangeIds(companyStockExchangeJoinRepository.getStockExchangeIdsByCompanyId(companyDto.getId()));
         }
         return companyDtoList;
+    }
+
+    public CompanyDto getCompanyById(@PathVariable int id) throws EntityNotFoundException {
+        CompanyDto companyDto = companyMapper.convertToDto(companyRepository.findByIdDeactivatedFalse(id).orElse(null));
+        if(companyDto == null) throw new EntityNotFoundException("Company with id: "+id+" not found.");
+        companyDto.setStockExchangeIds(companyStockExchangeJoinRepository.getStockExchangeIdsByCompanyId(companyDto.getId()));
+        return companyDto;
     }
 
     public int deactivateCompany(int id) throws EntityNotFoundException {
