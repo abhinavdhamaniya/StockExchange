@@ -56,7 +56,7 @@ public class CompanyService {
         return companyDto;
     }
 
-    public List<CompanyDto> getCompanyListByCompanyIdList(List<Integer> companyIdList) throws EntityNotFoundException {
+    public List<CompanyDto> getCompanyListByCompanyIdList(List<Integer> companyIdList) {
 
         List<CompanyDto> companyDtoList = new ArrayList<>();
         companyIdList.forEach(companyId -> {

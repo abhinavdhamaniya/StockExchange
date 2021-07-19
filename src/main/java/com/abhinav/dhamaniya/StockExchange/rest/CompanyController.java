@@ -55,14 +55,7 @@ public class CompanyController {
 
     @GetMapping(value = "/list/{idList}", produces = "application/json")
     public ResponseEntity getCompanyListByCompanyIdList(@PathVariable List<Integer> idList) {
-        try {
-            return new ResponseEntity(companyService.getCompanyListByCompanyIdList(idList), HttpStatus.OK);
-        }
-        catch(EntityNotFoundException entityNotFoundException)
-        {
-            System.out.println(entityNotFoundException);
-            return new ResponseEntity(new EntityNotFoundResponse("Company not found."), HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity(companyService.getCompanyListByCompanyIdList(idList), HttpStatus.OK);
     }
 
     @PatchMapping(value = "deactivate/{id}", produces = "application/json")

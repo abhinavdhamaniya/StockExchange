@@ -39,4 +39,8 @@ public class StockExchangeController {
         return new ResponseEntity(new EntityCreatedResponse(generatedStockExchangeId, "Stock Exchange Created."), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/list/{idList}", produces = "application/json")
+    public ResponseEntity getStockExchangeListByStockExchangeIdList(@PathVariable List<Integer> idList) {
+        return new ResponseEntity(stockExchangeService.getStockExchangeListByStockExchangeIdList(idList), HttpStatus.OK);
+    }
 }

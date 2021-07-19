@@ -2,6 +2,7 @@ package com.abhinav.dhamaniya.StockExchange.service;
 
 import com.abhinav.dhamaniya.StockExchange.dto.StockExchangeDto;
 import com.abhinav.dhamaniya.StockExchange.entities.CompanyStockExchangeJoin;
+import com.abhinav.dhamaniya.StockExchange.entities.StockExchange;
 import com.abhinav.dhamaniya.StockExchange.exception.EntityNotFoundException;
 import com.abhinav.dhamaniya.StockExchange.mapper.StockExchangeMapper;
 import com.abhinav.dhamaniya.StockExchange.repository.CompanyRepository;
@@ -9,8 +10,11 @@ import com.abhinav.dhamaniya.StockExchange.repository.CompanyStockExchangeJoinRe
 import com.abhinav.dhamaniya.StockExchange.repository.SectorRepository;
 import com.abhinav.dhamaniya.StockExchange.repository.StockExchangeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +47,25 @@ public class StockExchangeService {
         {
             stockExchangeDto.setCompanyIds(companyStockExchangeJoinRepository.getCompanyIdsByStockExchangeId(stockExchangeDto.getId()));
         }
+        return stockExchangeDtoList;
+    }
+
+    public List<StockExchangeDto> getStockExchangeListByStockExchangeIdList(@PathVariable List<Integer> idList) {
+        List<StockExchangeDto> stockExchangeDtoList = new ArrayList<>();
+        idList.forEach(id -> {
+            try {
+                StockExchange stockExchange = stockExchangeRepository.findById(id).orElse(null);
+                if (stockExchange == null)
+                    throw new EntityNotFoundException("Stock Exchange with id: " + id + " not found");
+                StockExchangeDto stockExchangeDto = stockExchangeMapper.convertToDto(stockExchange);
+                stockExchangeDto.setCompanyIds(companyStockExchangeJoinRepository.getCompanyIdsByStockExchangeId(stockExchangeDto.getId()));
+                stockExchangeDtoList.add(stockExchangeDto);
+            }
+            catch (EntityNotFoundException entityNotFoundException)
+            {
+                System.out.println(entityNotFoundException);
+            }
+        });
         return stockExchangeDtoList;
     }
 }
