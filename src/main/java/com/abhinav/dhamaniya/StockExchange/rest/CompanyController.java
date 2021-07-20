@@ -86,4 +86,11 @@ public class CompanyController {
         }
         return new ResponseEntity(new EntityCreatedResponse(generatedCompanyId, "Company Updated."), HttpStatus.OK);
     }
+
+    @GetMapping(value = "checkExists/{id}")
+    public ResponseEntity checkCompanyExists(@PathVariable int id) {
+        boolean exists = companyService.checkCompanyExists(id);
+        if(exists) return new ResponseEntity(true, HttpStatus.OK);
+        else return new ResponseEntity(false, HttpStatus.NOT_FOUND);
+    }
 }

@@ -93,4 +93,10 @@ public class CompanyService {
         for(int stockExchangeId : companyDto.getStockExchangeIds()) companyStockExchangeJoinRepository.save(new CompanyStockExchangeJoin(0, stockExchangeId, companyId));
         return companyId;
     }
+
+    public boolean checkCompanyExists(int id)
+    {
+        if(companyRepository.findById(id).isPresent()) return true;
+        return false;
+    }
 }
