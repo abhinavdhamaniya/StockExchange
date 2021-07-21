@@ -27,6 +27,11 @@ public class IpoService {
         return ipoRepository.findAll().stream().map(ipo -> ipoMapper.convertToDto(ipo)).collect(Collectors.toList());
     }
 
+    public Boolean checkIpoExists(int id) {
+        if(ipoRepository.findById(id).isPresent()) return true;
+        return false;
+    }
+
     public int updateIpo(IpoDto ipoDto) throws EntityNotFoundException, Exception{
         Ipo ipo = ipoRepository.findById(ipoDto.getId()).orElse(null);
         if(ipo == null) throw new EntityNotFoundException("Ipo Not Found");

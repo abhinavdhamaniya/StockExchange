@@ -37,6 +37,13 @@ public class IpoController {
         return new ResponseEntity(ipoService.getAllIpos(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "checkExists/{id}")
+    public ResponseEntity checkIpoExists(@PathVariable int id) {
+        Boolean exists = ipoService.checkIpoExists(id);
+        if (exists) return new ResponseEntity(true, HttpStatus.OK);
+        else return new ResponseEntity(false, HttpStatus.NOT_FOUND);
+    }
+
     @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
     public ResponseEntity updateIpo(@PathVariable int id, @RequestBody IpoDto ipoDto) {
 
