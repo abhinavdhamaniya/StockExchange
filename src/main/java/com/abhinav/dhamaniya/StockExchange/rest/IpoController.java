@@ -62,4 +62,9 @@ public class IpoController {
         }
         return new ResponseEntity(new EntityCreatedResponse(generatedIpoId, "IPO Updated."), HttpStatus.OK);
     }
+
+    @GetMapping(value="/{companyId}", produces = "application/json")
+    public ResponseEntity getAllIposByCompanyId(@PathVariable int companyId) {
+        return new ResponseEntity(ipoService.getAllIposByCompanyId(companyId), HttpStatus.OK);
+    }
 }

@@ -62,7 +62,7 @@ public class UserController {
 
     @PutMapping(value = "/updateUser/{id}", consumes = "application/json", produces = "application/json")
     public ResponseEntity updateUser(@PathVariable int id, @RequestBody UserDto userDto) {
-
+        System.out.println(userDto);
         int returnedUserId;
         try {
             returnedUserId = userService.updateUser(id, userDto);

@@ -37,4 +37,7 @@ public class IpoService {
         if(ipo == null) throw new EntityNotFoundException("Ipo Not Found");
         return ipoRepository.save(ipoMapper.convertToEntity(ipoDto)).getId();
     }
+    public List<IpoDto> getAllIposByCompanyId(int companyId) {
+        return ipoRepository.findByCompanyId(companyId).stream().map(ipo -> ipoMapper.convertToDto(ipo)).collect(Collectors.toList());
+    }
 }
