@@ -21,7 +21,7 @@ public class ExcelController {
     ExcelService excelService;
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity uploadExcel(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity uploadExcel(@RequestParam("excelFile") MultipartFile file) {
 
         String message = "";
         if (ExcelHelper.hasExcelFormat(file)) {

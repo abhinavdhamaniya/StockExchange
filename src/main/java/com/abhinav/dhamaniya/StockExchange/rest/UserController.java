@@ -1,6 +1,7 @@
 package com.abhinav.dhamaniya.StockExchange.rest;
 
 import com.abhinav.dhamaniya.StockExchange.dto.UserDto;
+import com.abhinav.dhamaniya.StockExchange.dto.request.UserLoginRequest;
 import com.abhinav.dhamaniya.StockExchange.dto.response.EntityCreatedResponse;
 import com.abhinav.dhamaniya.StockExchange.dto.response.EntityNotFoundResponse;
 import com.abhinav.dhamaniya.StockExchange.dto.response.ErrorOccurred;
@@ -79,5 +80,32 @@ public class UserController {
             return new ResponseEntity(new ErrorOccurred("Error Occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity(new EntityCreatedResponse(returnedUserId, "User Updated."), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "checkExists/{id}")
+    public ResponseEntity checkUserExists(@PathVariable int id) {
+        boolean exists = userService.checkUserExists(id);
+        if(exists) return new ResponseEntity(true, HttpStatus.OK);
+        else return new ResponseEntity(false, HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(value = "checkExistsAndConfirmed/{id}")
+    public ResponseEntity checkConfirmedUserExists(@PathVariable int id) {
+        boolean exists = userService.checkConfirmedUserExists(id);
+        if(exists) return new ResponseEntity(true, HttpStatus.OK);
+        else return new ResponseEntity(false, HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping(value = "validateLoginAndGetConfirmedUser")
+    public ResponseEntity validateLoginAndGetConfirmedUser(@RequestBody UserLoginRequest userLoginRequest) {
+
+        UserDto userDto = null;
+        try {
+            userDto = userService.validateLoginAndGetConfirmedUser(userLoginRequest);
+        }
+        catch (EntityNotFoundException entityNotFoundException) {
+            return new ResponseEntity(false, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(userDto, HttpStatus.OK);
     }
 }
