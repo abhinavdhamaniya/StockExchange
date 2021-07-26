@@ -3,12 +3,15 @@ package com.abhinav.dhamaniya.StockExchange.rest;
 import com.abhinav.dhamaniya.StockExchange.dto.IpoDto;
 import com.abhinav.dhamaniya.StockExchange.dto.response.EntityCreatedResponse;
 import com.abhinav.dhamaniya.StockExchange.dto.response.EntityNotFoundResponse;
+import com.abhinav.dhamaniya.StockExchange.dto.response.MultipleEntitiesCreatedResponse;
 import com.abhinav.dhamaniya.StockExchange.exception.EntityNotFoundException;
 import com.abhinav.dhamaniya.StockExchange.service.IpoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -66,5 +69,19 @@ public class IpoController {
     @GetMapping(value="/{companyId}", produces = "application/json")
     public ResponseEntity getAllIposByCompanyId(@PathVariable int companyId) {
         return new ResponseEntity(ipoService.getAllIposByCompanyId(companyId), HttpStatus.OK);
+    }
+
+    @PostMapping(value="saveIpoList", consumes = "application/json", produces = "application/json")
+    public ResponseEntity saveIpoList(@RequestBody List<IpoDto> ipoDtoList) {
+
+        List<Integer> generatedIpoIdList;
+        try{
+            generatedIpoIdList = ipoService.saveIpoList(ipoDtoList);
+        }
+        catch (Exception exception)
+        {
+            return new ResponseEntity(new EntityNotFoundResponse("Company Not Found"), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(new MultipleEntitiesCreatedResponse(generatedIpoIdList, "IPOs Created."), HttpStatus.OK);
     }
 }

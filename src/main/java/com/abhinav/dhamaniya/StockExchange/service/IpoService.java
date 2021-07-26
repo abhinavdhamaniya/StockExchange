@@ -6,7 +6,9 @@ import com.abhinav.dhamaniya.StockExchange.exception.EntityNotFoundException;
 import com.abhinav.dhamaniya.StockExchange.mapper.IpoMapper;
 import com.abhinav.dhamaniya.StockExchange.repository.IpoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +39,14 @@ public class IpoService {
         if(ipo == null) throw new EntityNotFoundException("Ipo Not Found");
         return ipoRepository.save(ipoMapper.convertToEntity(ipoDto)).getId();
     }
+
     public List<IpoDto> getAllIposByCompanyId(int companyId) {
         return ipoRepository.findByCompanyId(companyId).stream().map(ipo -> ipoMapper.convertToDto(ipo)).collect(Collectors.toList());
+    }
+
+    public List<Integer> saveIpoList(List<IpoDto> ipoDtoList) throws Exception {
+        List<Ipo> ipoList = ipoRepository.saveAll(ipoDtoList.stream().map(ipoDto -> ipoMapper.convertToEntity(ipoDto)).collect(Collectors.toList()));
+        List<Integer> idList = ipoList.stream().map(ipo -> ipo.getId()).collect(Collectors.toList());
+        return idList;
     }
 }
