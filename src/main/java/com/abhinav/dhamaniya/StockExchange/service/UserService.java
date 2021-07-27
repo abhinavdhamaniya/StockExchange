@@ -29,7 +29,7 @@ public class UserService {
 
     public int signUpUser(@RequestBody UserDto userDto) throws MessagingException {
         int generatedUserId = userRepository.save(userMapper.convertToEntity(userDto)).getId();
-        String emailBody = "<html><h2>Click on the below link to confirm your account</h2><a href='http://localhost:8090/users/confirmUser/"+generatedUserId+"'>Confirm User</a></html>";
+        String emailBody = "<html><h2>Click on the below link to confirm your account</h2><a href='https://stock-exchange-app-abhinav.herokuapp.com/users/confirmUser/"+generatedUserId+"'>Confirm User</a></html>";
         emailService.sendMail(userDto.getEmail(), "Verify your account for Stock Exchange Application", emailBody);
         return generatedUserId;
     }
