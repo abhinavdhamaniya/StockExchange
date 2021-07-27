@@ -14,4 +14,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "SELECT * FROM APP_USER WHERE USERNAME = :username AND PASSWORD = :password AND CONFIRMED = true", nativeQuery = true)
     Optional<User> validateUsernamePassword(@Param("username") String username, @Param("password") String password);
+
+    @Query(value = "SELECT * FROM APP_USER WHERE USERNAME = :username AND CONFIRMED = true", nativeQuery = true)
+    Optional<User> findByUsername(@Param("username") String username);
 }

@@ -5,12 +5,19 @@ import com.abhinav.dhamaniya.StockExchange.dto.request.UserLoginRequest;
 import com.abhinav.dhamaniya.StockExchange.dto.response.EntityCreatedResponse;
 import com.abhinav.dhamaniya.StockExchange.dto.response.EntityNotFoundResponse;
 import com.abhinav.dhamaniya.StockExchange.dto.response.ErrorOccurred;
+import com.abhinav.dhamaniya.StockExchange.dto.response.JwtResponse;
 import com.abhinav.dhamaniya.StockExchange.exception.EntityNotFoundException;
 import com.abhinav.dhamaniya.StockExchange.exception.UserNotConfirmed;
+import com.abhinav.dhamaniya.StockExchange.exception.UsernameNotFoundException;
+import com.abhinav.dhamaniya.StockExchange.jwt.helper.JwtUtil;
+import com.abhinav.dhamaniya.StockExchange.jwt.service.CustomUserDetailsService;
 import com.abhinav.dhamaniya.StockExchange.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -22,6 +29,15 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
     public ResponseEntity signUpUser(@RequestBody UserDto userDto) {
@@ -96,9 +112,23 @@ public class UserController {
         else return new ResponseEntity(false, HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping(value = "validateLoginAndGetConfirmedUser")
-    public ResponseEntity validateLoginAndGetConfirmedUser(@RequestBody UserLoginRequest userLoginRequest) {
+    @PostMapping(value = "/validateLoginAndGetConfirmedUser")
+    public ResponseEntity generateToken(@RequestBody UserLoginRequest userLoginRequest) throws Exception {
 
+        // JWT Part
+        try {
+            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.getUsername(), userLoginRequest.getPassword()));
+        }
+        catch (Exception exception)
+        {
+            return new ResponseEntity(false, HttpStatus.NOT_FOUND);
+        }
+
+        UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(userLoginRequest.getUsername());
+        String token = this.jwtUtil.generateToken(userDetails);
+        System.out.println(token);
+
+        // Validating User Credentials
         UserDto userDto = null;
         try {
             userDto = userService.validateLoginAndGetConfirmedUser(userLoginRequest);
@@ -106,6 +136,7 @@ public class UserController {
         catch (EntityNotFoundException entityNotFoundException) {
             return new ResponseEntity(false, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity(userDto, HttpStatus.OK);
+
+        return new ResponseEntity(new JwtResponse(token,userDto), HttpStatus.OK);
     }
 }
