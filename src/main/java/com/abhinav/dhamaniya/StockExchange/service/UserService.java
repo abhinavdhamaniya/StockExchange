@@ -8,7 +8,6 @@ import com.abhinav.dhamaniya.StockExchange.exception.UserNotConfirmed;
 import com.abhinav.dhamaniya.StockExchange.mapper.UserMapper;
 import com.abhinav.dhamaniya.StockExchange.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
